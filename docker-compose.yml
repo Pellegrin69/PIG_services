@@ -1,0 +1,42 @@
+version: '2'
+services:
+  auth-api:
+    build:
+      context: ./auth-api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "mysql://manu:manu@localhost:3306/auth_db"
+    networks:
+      - app-network
+
+  recipes-api:
+    build:
+      context: ./recipes-api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "mysql://manu:manu@localhost:3306/recipes_db"
+    networks:
+      - app-network
+
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - '3307:3306'
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mariadb_data:

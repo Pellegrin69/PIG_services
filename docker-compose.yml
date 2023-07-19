@@ -1,0 +1,41 @@
+version: '1'
+services:
+  auth-api:
+    build:
+      context: ./auth-api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://user:password@db:5432/authdb"
+    networks:
+      - app-network
+
+  recipes-api:
+    build:
+      context: ./recipes-api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://user:password@db:5432/recipesdb"
+    networks:
+      - app-network
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: authdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pgdata:
